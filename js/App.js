@@ -1,6 +1,8 @@
 var Engine = Matter.Engine;
 var World = Matter.World;
 var Body = Matter.Body;
+var Composite = Matter.Composite;
+var Constraint = Matter.Constraint;
 var Bodies = Matter.Bodies;
 var Bounds = Matter.Bounds;
 var Vector = Matter.Vector;
@@ -92,6 +94,7 @@ function draw() {
     background(0);
     drawTargetShadow();
     drawBlocks();
+    drawConstraints();
     // drawGroupAreas();
 }
 
@@ -121,12 +124,31 @@ function drawBlocks() {
             x: one.vertices[0].x / 2 + one.vertices[one.vertices.length - 1].x / 2,
             y: one.vertices[0].y / 2 + one.vertices[one.vertices.length - 1].y / 2
         }
-        stroke(255, 0, 0, 64);
+        stroke(150, 0, 0, 64);
         line(one.position.x,
             one.position.y,
             one.position.x + (midPoint.x - one.position.x) * 0.88,
             one.position.y + (midPoint.y - one.position.y) * 0.88
         );
+    }
+}
+
+function drawConstraints() {
+    allConstraints = Composite.allConstraints(engine.world);
+    for (i = 0; i < allConstraints.length; i++) {
+        var constraint = allConstraints[i],
+            bodyA = constraint.bodyA,
+            bodyB = constraint.bodyB,
+            pointAWorld = constraint.pointA,
+            pointBWorld = constraint.pointB;
+
+        if (bodyA) pointAWorld = Vector.add(bodyA.position, constraint.pointA);
+        if (bodyB) pointBWorld = Vector.add(bodyB.position, constraint.pointB);
+
+        if (!pointAWorld || !pointBWorld)
+            continue;
+        stroke(0, 255, 0);
+        line(pointAWorld.x, pointAWorld.y, pointBWorld.x, pointBWorld.y);
     }
 }
 
@@ -174,8 +196,15 @@ function onMouseDownEvent() {
     };
     var groupsToHighlight = getGroupsToHighlight();
     if (groupsToHighlight !== undefined) {
-        currDraggingGroup = groupsToHighlight;
+        // currDraggingGroup = groupsToHighlight;
         console.log('start group dragging', currDraggingGroup);
+        // make body non static
+        var groupBlks = groups[groupsToHighlight].blocks;
+        for (var i = 0; i < groupBlks.length; i++) {
+            var one = getBlockFromID(groupBlks[i]);
+            Body.setStatic(one, false);
+            Body.setInertia(one, Infinity);
+        }
     }
     else if (mouseConstraints.body) {
         // set single block for free to drag around
@@ -497,14 +526,19 @@ function offsetGroupPosition(id, offset) {
 /* CONNECTIONS */
 
 function createConnection(b1, b2) {
+    if(b1.connected.includes(b2.id)){
+        return;
+    }
+    
     // console.log('create connection with', b1.id, b2.id);
     var p1 = [b1.position.x, b1.position.y];
     var p2 = [b2.position.x, b2.position.y];
+    var q1, q2;
     for (var i = 0; i < b1.vertices.length; i++) {
         var vert1 = b1.vertices[i];
         var vert2 = b1.vertices[(i + 1) % b1.vertices.length];
-        var q1 = [vert1.x, vert1.y];
-        var q2 = [vert2.x, vert2.y];
+        q1 = [vert1.x, vert1.y];
+        q2 = [vert2.x, vert2.y];
         var lineIntersect = decomp.lineSegmentsIntersect(p1, p2, q1, q2);
         if (lineIntersect) {
             b1.connected[i] = b2.id;
@@ -514,14 +548,44 @@ function createConnection(b1, b2) {
     for (var j = 0; j < b2.vertices.length; j++) {
         var vert1 = b2.vertices[j];
         var vert2 = b2.vertices[(j + 1) % b2.vertices.length];
-        var q1 = [vert1.x, vert1.y];
-        var q2 = [vert2.x, vert2.y];
+        q1 = [vert1.x, vert1.y];
+        q2 = [vert2.x, vert2.y];
         var lineIntersect = decomp.lineSegmentsIntersect(p1, p2, q1, q2);
         if (lineIntersect) {
             b2.connected[j] = b1.id;
             break;
         }
     }
+    // create constrains 
+    var midPt = [(q1[0] + q2[0])/2, (q1[1] + q2[1])/2];
+    var constraint1 = Constraint.create({
+        bodyA: b1, 
+        bodyB: b2,
+        pointA: {
+            x: (midPt[0] - p1[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4, 
+            y: (midPt[1] - p1[1]) * 0.9 + (q1[1] - midPt[1]) * 0.4
+        },
+        pointB: {
+            x: (midPt[0] - p2[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4,  
+            y: (midPt[1] - p2[1]) * 0.9 + (q1[1] - midPt[1]) * 0.4
+        },
+        stiffness: 1
+    });
+    World.addConstraint(engine.world, constraint1);
+    var constraint2 = Constraint.create({
+        bodyA: b1, 
+        bodyB: b2,
+        pointA: {
+            x: (midPt[0] - p1[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4, 
+            y: (midPt[1] - p1[1]) * 0.9 + (q2[1] - midPt[1]) * 0.4
+        },
+        pointB: {
+            x: (midPt[0] - p2[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4,  
+            y: (midPt[1] - p2[1]) * 0.9 + (q2[1] - midPt[1]) * 0.4
+        },
+        stiffness: 1
+    });
+    World.addConstraint(engine.world, constraint2);
 }
 
 /* BLOCKS */
