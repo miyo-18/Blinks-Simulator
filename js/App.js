@@ -526,10 +526,10 @@ function offsetGroupPosition(id, offset) {
 /* CONNECTIONS */
 
 function createConnection(b1, b2) {
-    if(b1.connected.includes(b2.id)){
+    if (b1.connected.includes(b2.id)) {
         return;
     }
-    
+
     // console.log('create connection with', b1.id, b2.id);
     var p1 = [b1.position.x, b1.position.y];
     var p2 = [b2.position.x, b2.position.y];
@@ -557,30 +557,30 @@ function createConnection(b1, b2) {
         }
     }
     // create constrains 
-    var midPt = [(q1[0] + q2[0])/2, (q1[1] + q2[1])/2];
+    var midPt = [(q1[0] + q2[0]) / 2, (q1[1] + q2[1]) / 2];
     var constraint1 = Constraint.create({
-        bodyA: b1, 
+        bodyA: b1,
         bodyB: b2,
         pointA: {
-            x: (midPt[0] - p1[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4, 
+            x: (midPt[0] - p1[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4,
             y: (midPt[1] - p1[1]) * 0.9 + (q1[1] - midPt[1]) * 0.4
         },
         pointB: {
-            x: (midPt[0] - p2[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4,  
+            x: (midPt[0] - p2[0]) * 0.9 + (q1[0] - midPt[0]) * 0.4,
             y: (midPt[1] - p2[1]) * 0.9 + (q1[1] - midPt[1]) * 0.4
         },
         stiffness: 1
     });
     World.addConstraint(engine.world, constraint1);
     var constraint2 = Constraint.create({
-        bodyA: b1, 
+        bodyA: b1,
         bodyB: b2,
         pointA: {
-            x: (midPt[0] - p1[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4, 
+            x: (midPt[0] - p1[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4,
             y: (midPt[1] - p1[1]) * 0.9 + (q2[1] - midPt[1]) * 0.4
         },
         pointB: {
-            x: (midPt[0] - p2[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4,  
+            x: (midPt[0] - p2[0]) * 0.9 + (q2[0] - midPt[0]) * 0.4,
             y: (midPt[1] - p2[1]) * 0.9 + (q2[1] - midPt[1]) * 0.4
         },
         stiffness: 1
@@ -623,3 +623,4 @@ function pointInsidePolygon(vs, pt) {
     }
     return inside;
 }
+
