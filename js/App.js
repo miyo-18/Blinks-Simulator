@@ -6,6 +6,7 @@ var Engine = Matter.Engine,
   Body = Matter.Body,
   Composite = Matter.Composite,
   Composites = Matter.Composites,
+  Constraint = Matter.Constraint,
   Mouse = Matter.Mouse,
   MouseConstraint = Matter.MouseConstraint,
   Events = Matter.Events;
@@ -34,10 +35,19 @@ function setup() {
     // // console.log(blocks[0]);
 
     one = generateBlock(400, 300, 50, PI/2);
-    two = generateBlock(400, 300, 50, -PI/2);
+    two = generateBlock(330, 300, 50, -PI/2);
     blocks.push(one);
     blocks.push(two);
 
+    var options = {
+        bodyA: one.body,
+        bodyB: two.body,
+        length: 10,
+        stiffness: 0.4
+    }
+
+    // var constraint = Constraint.create(options);
+    // World.add(world, constraint);
 
     // add triangle
     // var one = new Blink(width / 2, height/2, BLOCK_RADIUS * 2, PI/2);
@@ -132,10 +142,35 @@ function drawBlocks(){
         endShape(CLOSE);
 
         // draw angle indicator
-        // stroke(255, 0, 0);
-        // line(one.position.x,
-        //     one.position.y,
-        //     one.vertices[0].x/2 + one.vertices[one.vertices.length-1].x/2,
-        //     one.vertices[0].y/2 + one.vertices[one.vertices.length-1].y/2);
+        stroke(255, 0, 0);
+        line(one.position.x,
+            one.position.y,
+            one.vertices[0].x/2 + one.vertices[one.vertices.length-1].x/2,
+            one.vertices[0].y/2 + one.vertices[one.vertices.length-1].y/2);
+          // lines to each hexagon vertex
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[1].x,
+    //         one.vertices[1].y);
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[4].x,
+    //         one.vertices[4].y);
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[7].x,
+    //         one.vertices[7].y);
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[11].x,
+    //         one.vertices[11].y);
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[13].x,
+    //         one.vertices[13].y);
+    //     line(one.position.x,
+    //         one.position.y,
+    //         one.vertices[16].x,
+    //         one.vertices[16].y);
     }
 }
