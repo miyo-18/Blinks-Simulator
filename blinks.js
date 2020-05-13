@@ -22,7 +22,7 @@ render = Render.create({
     width: width,
     height: height,
     wireframes: false,
-    background: 'gray',
+    background: 'white',
     delta: 1000/60,
     isFixed: false,
     enabled: true
