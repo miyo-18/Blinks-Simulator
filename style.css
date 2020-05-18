@@ -1,7 +1,3 @@
-*, *::before, *::after {
-	box-sizing: border-box;
-}
-
 html {
 	height: 100%;
 }
@@ -12,7 +8,7 @@ body {
 	justify-content: center;
 	min-height: 100%;
 	margin: 0;
-    background-color: #212529;
+  background-color: #212529;
 }
 
 canvas {
@@ -22,5 +18,32 @@ canvas {
 }
 
 meta[name="viewport"] {
-	height: 100%;
+	height: 90%;
+}
+
+button {
+  color: white;
+  background: #06D6A0;
+	border: none;
+  padding: 5px;
+  font-size: 1.2em;
+  font-family: 'Kanit', sans-serif;
+  margin: auto;
+  cursor: pointer;
+	text-align: center;
+	border-radius: 8px;
+	width: 250px;
+	transition-duration: 0.4s;
+}
+
+button:hover {
+	background-color: #CAEDE4;
+	color: white;
+}
+
+p.error {
+	visibility: hidden;
+	color: white;
+	text-align: center;
+	font-family: 'Kanit', sans-serif;
 }
