@@ -77,10 +77,10 @@ var blinks = [];
 var addBlink = function() {
   if (blinks.length == 6){
     // alert("You can only have up to 6 blinks at one time.");
-    document.getElementById("error-message").style.visibility = "visible";
-    setTimeout(function(){
-      document.getElementById("error-message").style.visibility = "hidden";
-    }, 3000);
+    // document.getElementById("error-message").style.visibility = "visible";
+    // setTimeout(function(){
+    //   document.getElementById("error-message").style.visibility = "hidden";
+    // }, 3000);
   } else {
     blinks.push(makeBlink(Math.random()*(width-200) + 100, Math.random()*(height-200) + 100));
   }
